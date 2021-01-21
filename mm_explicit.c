@@ -54,6 +54,8 @@ static void *extend_heap(size_t words);
 static void *find_fit(size_t asize);
 static void place(void *bp, size_t asize);
 static void byeBlock(void *bp);
+///(((byeBlock의 함수명은 explict의 개념이 없이면 조금 이해하기 힘든 함수명일 수 있을거라 생각합니다! 함수명이 조금 길더라도
+/// remove_block_from_freelist와 같이 조금더 직관적이면 좋을거 같아요! 물론 바이블록도 좋긴합니다 !)))///
 
 void* heap_listp;           /* 힙의 맨 처음 위치를 가리키고 있는 포인터, find_fit을 하는 시작점이 된다*/
 void* free_listp;           /* 가용 블록의 시작 위치를 가리키고 있는 포인터 */
@@ -67,7 +69,7 @@ int mm_init(void)
     /* Create the initial empty heap */
     /* 4 워드 크기 만큼을 추가한다, Alignment padding, Prologue header, Prologue footer, Epilogue header가 들어갈 공간 확보 */
  
-#ifdef TEST
+#ifdef TEST ///(((테스트 하시고 지우실 예정이셨겠지만 무슨 테스트인지 궁금합니다!)))///
     if ((heap_listp = mem_sbrk(4 * WSIZE)) == (void *)-1)
         return -1; 
     PUT(heap_listp, 0);                                       
@@ -120,7 +122,7 @@ static void *extend_heap(size_t words)
         asize = MINBLOCK;
 
     /* mem_sbrk를 통해 break를 뒤로 옮겨 힙 공간을 size만큼 키운다 */
-    if ((long)(bp = mem_sbrk(asize)) == -1)
+    if ((long)(bp = mem_sbrk(asize)) == -1) ///(((long)자료형을 꼭 써야 하는건가요~~?))///
         return NULL;
 
     /* Initialize free block header/footer and the epilogue header */

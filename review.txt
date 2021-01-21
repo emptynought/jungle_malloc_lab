@@ -1,0 +1,48 @@
+
+& 리뷰(궁금한내용)은 코드에도 주석으로 달아놨지만 보기시 편하시라고 따로 텍스트 파일 만들었습니다.
+
+전반적으로 저보다 훨씬 잘하시는 분의 코드를 보고 많이 배웠습니다!
+코드 전반적으로 주석이 깔끔하게 달려 있어 논리의 흐름이 어지럽지 않고 깔끔하게 흘러가서 너무 보기 편했습니다.
+very very very very very very LGTM 입니다.
+
+
+implicit
+
+- 할당 가능 여부를 따로 정의해놓으신것이 훨씬 직관적으로 사용할 수 있어서 좋습니다.
+#define CAN_ALLOC(p, size) !GET_ALLOC(HDRP(p)) && (size <= GET_SIZE(HDRP(p)))
+
+- 어제 nextfit의 포인터를 coalesce에 놓아도 되는지 질문했고 명확한 답변을 주셔서 감사했습니다. 저는 단순히 next_fitp = bp;만 추가했었는데 따로 조건을 걸어 놓으신게 좋아보입니다.
+#ifdef NEXT_FIT
+    if (next_fitp > bp && next_fitp < NEXT_BLKP(bp))
+        next_fitp = bp;
+#endif
+
+
+- ifdef는 처음봅니다!! ifdef으로 깔끔하게 firstfit nextfit 스위칭 하는게 좋네요 그리고 for문 처음 인자를 안줘도 되는줄 처음알았습니다.
+
+static void *find_fit(size_t asize){
+    /* Next-fit search */
+#ifdef NEXT_FIT
+
+
+
+explicit
+
+- byeBlock의 함수명은 explict의 개념이 없이면 조금 이해하기 힘든 함수명일 수 있을거라 생각합니다!
+함수명이 조금 길더라도 remove_block_from_freelist와 같이 조금더 직관적이면 좋을거 같아요! 물론 바이블록도 좋긴합니다 !
+static void byeBlock(void *bp);
+
+
+- 테스트 하시고 지우실 예정이셨겠지만 무슨 테스트인지 궁금합니다!
+#ifdef TEST
+    if ((heap_listp = mem_sbrk(4 * WSIZE)) == (void *)-1)
+        return -1;
+    PUT(heap_listp, 0);
+
+- (long)자료형을 꼭 써야 하는건가요~~?
+- 자문자답 32bit에서는 long이 4byte, 64bit에서는 long이 8byte이고, 포인터도 각각 32에서는 4 바이트, 64에서는 8 바이트이기 때문에 사용하는거군요.
+- 저는 제 코드에서는 그냥 없이 했는데 다양한 운영체제 bit에 맞추기 위해서는 long을 써야하군요!
+
+/* mem_sbrk를 통해 break를 뒤로 옮겨 힙 공간을 size만큼 키운다 */
+if ((long)(bp = mem_sbrk(asize)) == -1)
+    return NULL;

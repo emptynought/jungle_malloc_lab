@@ -85,6 +85,8 @@ team_t team = {
 
 /* 포인터가 가리키는 위치에 주어진 공간을 할당할 수 있는지 확인 */
 #define CAN_ALLOC(p, size) !GET_ALLOC(HDRP(p)) && (size <= GET_SIZE(HDRP(p)))
+///(((((((((할당 가능 여부를 따로 정의해놓으신것이 훨씬 직관적으로 사용할 수 있어서 좋습니다.))))))))))///
+
 
 static void *coalesce(void *bp);
 static void *extend_heap(size_t words);
@@ -193,6 +195,8 @@ void *mm_malloc(size_t size)
     place(bp, asize);
     return bp;
 }
+///(((((((((ifdef는 처음봅니다!! ifdef으로 깔끔하게 firstfit nextfit 스위칭 하는게 좋네요
+/// 그리고 for문 처음 인자를 안줘도 되는줄 처음알았습니다. coal))))))))))///
 
 static void *find_fit(size_t asize){
     /* Next-fit search */
@@ -264,6 +268,8 @@ void mm_free(void *bp)
     coalesce(bp);
 }
 
+
+
 static void *coalesce(void *bp)
 {
     // 이전 블록 할당 여부, 다음 블록 할당 여부, 현재 블록의 크기 확인 */
@@ -298,6 +304,9 @@ static void *coalesce(void *bp)
         PUT(HDRP(bp), PACK(size, 0)); 
         PUT(FTRP(bp), PACK(size, 0));       
     }
+
+///(((((((((어제 nextfit의 포인터를 coalesce에 놓아도 되는지 질문했고 명확한 답변을 주셔서 감사했습니다. 저는 단순히 next_fitp = bp;만
+/// 추가했었는데 따로 조건을 걸어 놓으신게 좋아보입니다.))))))))))///
 #ifdef NEXT_FIT
     if (next_fitp > bp && next_fitp < NEXT_BLKP(bp))
         next_fitp = bp;
